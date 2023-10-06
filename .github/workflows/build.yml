@@ -10,7 +10,7 @@ on:
       doRelease:
         description: 'Publish new release'
         type: boolean
-        default: false
+        default: true
         required: false
       buildOnly:
         description: 'Only build ffmpeg'
@@ -284,10 +284,6 @@ jobs:
           gh release delete --cleanup-tag --yes "$TAGNAME" || true
           sleep 15
           gh release create "$TAGNAME" --target "master" --title "$NAME" latest_artifacts/*
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-      - name: Update Wiki
-        run: ./util/update_wiki.sh artifacts ${{ steps.create_release.outputs.tag_name }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Prune old releases
