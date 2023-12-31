@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SCRIPT_REPO="https://github.com/xiph/rav1e.git"
-SCRIPT_COMMIT="f8b95d97517a6e223f1c6a90a467188586dd090f"
+SCRIPT_COMMIT="b9f4275e0da18fe81c314831bfcb39867b47df14"
 
 ffbuild_enabled() {
     [[ $TARGET == win32 ]] && return -1
@@ -9,8 +9,6 @@ ffbuild_enabled() {
 }
 
 ffbuild_dockerbuild() {
-    cd "$FFBUILD_DLDIR/$SELF"
-
     local myconf=(
         --prefix="$FFBUILD_PREFIX"
         --library-type=staticlib
