@@ -11,12 +11,11 @@ on:
 
 env:
   DOCKER_BUILDKIT: 1
-  HAVE_CLEANUP_PAT: ${{ secrets.CLEANUP_PAT != '' }}
+  HAVE_CLEANUP_PAT: false
 
 jobs:
   build_base:
     name: Build base image
-    if: ${{ github.event.inputs.buildOnly != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Free Disk-Space
@@ -67,20 +66,8 @@ jobs:
           set -e
           ./download.sh
           ./util/clean_cache.sh
-      - name: Cleanup
-        if: ${{ env.HAVE_CLEANUP_PAT == 'true' }}
-        continue-on-error: true
-        uses: BtbN/delete-untagged-ghcr-action@main
-        with:
-          token: ${{ secrets.CLEANUP_PAT }}
-          package_name: ${{ steps.imagename.outputs.rawname }}
-          repository_owner: ${{ github.repository_owner }}
-          repository: ${{ github.repository }}
-          owner_type: user
-          untagged_only: true
   build_target_bases:
     name: Build target base image
-    if: ${{ github.event.inputs.buildOnly != 'true' }}
     needs: build_base
     runs-on: ubuntu-latest
     strategy:
@@ -123,27 +110,15 @@ jobs:
           cache-from: type=registry,ref=${{ steps.imagename.outputs.name }}:cache
           build-args: |
             GH_REPO=ghcr.io/${{ steps.imagename.outputs.gh_repo }}
-      - name: Cleanup
-        if: ${{ env.HAVE_CLEANUP_PAT == 'true' }}
-        continue-on-error: true
-        uses: BtbN/delete-untagged-ghcr-action@main
-        with:
-          token: ${{ secrets.CLEANUP_PAT }}
-          package_name: ${{ steps.imagename.outputs.rawname }}
-          repository_owner: ${{ github.repository_owner }}
-          repository: ${{ github.repository }}
-          owner_type: user
-          untagged_only: true
   build_targets:
     name: Build target-variant image
-    if: ${{ github.event.inputs.buildOnly != 'true' }}
     needs: build_target_bases
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        target: [win64]
-        variant: [nonfree,nonfree-shared]
+        target: [win64,linux64]
+        variant: [nonfree,nonfree-shared,nonfree-shared topaz]
     steps:
       - name: Free Disk-Space
         run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
@@ -189,27 +164,15 @@ jobs:
           tags: ${{ steps.imagename.outputs.name }}:latest
           cache-to: type=registry,mode=max,ref=${{ steps.imagename.outputs.name }}:cache
           cache-from: type=registry,ref=${{ steps.imagename.outputs.name }}:cache
-      - name: Cleanup
-        if: ${{ env.HAVE_CLEANUP_PAT == 'true' }}
-        continue-on-error: true
-        uses: BtbN/delete-untagged-ghcr-action@main
-        with:
-          token: ${{ secrets.CLEANUP_PAT }}
-          package_name: ${{ steps.imagename.outputs.rawname }}
-          repository_owner: ${{ github.repository_owner }}
-          repository: ${{ github.repository }}
-          owner_type: user
-          untagged_only: true
   build_ffmpeg:
     name: Build ffmpeg
-    if: ${{ ( github.event.inputs.buildOnly == 'true' && !cancelled() ) || success() }}
     needs: build_targets
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        target: [win64]
-        variant: [nonfree,nonfree-shared]
+        target: [win64,linux64]
+        variant: [nonfree,nonfree-shared,nonfree-shared topaz]
     steps:
       - name: Free Disk-Space
         run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
