@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SCRIPT_REPO="https://github.com/mm2/Little-CMS.git"
-SCRIPT_COMMIT="f1060e7989a68f62dd3876aa7d755d974ffd9a3a"
+SCRIPT_COMMIT="f6b092b36254487312fd47a30a81fa703f006152"
 
 ffbuild_enabled() {
     return 0
@@ -14,7 +14,6 @@ ffbuild_dockerbuild() {
         --prefix="$FFBUILD_PREFIX"
         -Ddefault_library=static
         -Dutils=false
-        -Dsamples=false
         -Dfastfloat=true
         -Dthreaded=true
     )

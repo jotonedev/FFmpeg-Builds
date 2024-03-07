@@ -1,10 +1,15 @@
 #!/bin/bash
 
 SCRIPT_REPO="https://github.com/GPUOpen-LibrariesAndSDKs/AMF.git"
-SCRIPT_COMMIT="c48e50ad6c8723c006b2c145d8fa49ecc0651022"
+SCRIPT_COMMIT="572b8d6ff5d7ec3b1777f32aa13b6da6d801720f"
 
 ffbuild_enabled() {
     return 0
+}
+
+ffbuild_dockerdl() {
+    default_dl .
+    echo "rm -rf .git Thirdparty"
 }
 
 ffbuild_dockerbuild() {
