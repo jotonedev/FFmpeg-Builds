@@ -5,7 +5,6 @@ SCRIPT_COMMIT="ba2227bb8619724c2bfadcc4d8f25d741a3398ac"
 
 ffbuild_enabled() {
     [[ $VARIANT == lgpl* ]] && return -1
-    [[ $ADDINS_STR == *topaz* ]] && return -1
     [[ $ADDINS_STR == *4.4* ]] && return -1
     [[ $ADDINS_STR == *5.0* ]] && return -1
     [[ $ADDINS_STR == *5.1* ]] && return -1
@@ -41,7 +40,11 @@ ffbuild_dockerbuild() {
 }
 
 ffbuild_configure() {
-    echo --enable-libdvdread
+    if [[ $ADDINS_STR == *topaz* ]]; then
+        return
+    else 
+        echo --enable-libdvdread
+    fi
 }
 
 ffbuild_unconfigure() {
