@@ -34,7 +34,7 @@ cat <<EOF >"$BUILD_SCRIPT"
     cd /ffbuild
     rm -rf ffmpeg prefix
 
-    git clone --filter=blob:none --branch='$GIT_BRANCH' '$FFMPEG_REPO' ffmpeg
+    git clone --depth=1 --filter=blob:none --branch='$GIT_BRANCH' '$FFMPEG_REPO' ffmpeg
     cd ffmpeg
 
     ./configure --prefix=/ffbuild/prefix --pkg-config-flags="--static" \$FFBUILD_TARGET_FLAGS \$FF_CONFIGURE \

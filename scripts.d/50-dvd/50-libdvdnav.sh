@@ -38,7 +38,11 @@ ffbuild_dockerbuild() {
 }
 
 ffbuild_configure() {
-    echo --enable-libdvdnav
+    if [[ $ADDINS_STR == *topaz* ]]; then
+        return
+    else 
+        echo --enable-libdvdnav
+    fi
 }
 
 ffbuild_unconfigure() {
