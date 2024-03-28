@@ -12,7 +12,7 @@ on:
       chosen-system:
         description: 'Choose the system to run on'
         required: true
-        default: self-hosted
+        default: ubuntu-latest
         type: choice
         options:
         - self-hosted
