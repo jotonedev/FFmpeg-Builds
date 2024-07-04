@@ -87,7 +87,7 @@ jobs:
   build_target_bases:
     name: Build target base image
     needs: build_base
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.chosen-system }}
     strategy:
       fail-fast: false
       matrix:
@@ -141,12 +141,12 @@ jobs:
   build_targets:
     name: Build target-variant image
     needs: build_target_bases
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.chosen-system }}
     strategy:
       fail-fast: false
       matrix:
         target: [win64,linux64,linuxarm64]
-        variant: [nonfree-shared,nonfree-shared topaz]
+        variant: [nonfree-shared]
     steps:
       - name: Free Disk-Space
         run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
@@ -205,12 +205,12 @@ jobs:
   build_ffmpeg:
     name: Build ffmpeg
     needs: build_targets
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.chosen-system }}
     strategy:
       fail-fast: false
       matrix:
         target: [win64,linux64,linuxarm64]
-        variant: [nonfree-shared,nonfree-shared topaz]
+        variant: [nonfree-shared]
     steps:
       - name: Free Disk-Space
         run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
@@ -241,7 +241,7 @@ jobs:
     name: Publish release
     if: ${{ !cancelled() && ( github.event_name == 'schedule' || github.event.inputs.doRelease == 'true' ) && needs.build_ffmpeg.result == 'success' }}
     needs: build_ffmpeg
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.chosen-system }}
     steps:
       - name: Free Disk-Space
         run: df -h && sudo apt-get clean && docker system prune -a -f && sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc && df -h
