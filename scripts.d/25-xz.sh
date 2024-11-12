@@ -1,19 +1,21 @@
 #!/bin/bash
 
-SCRIPT_REPO="https://github.com/GNOME/libxml2.git"
-SCRIPT_COMMIT="869e3fd421835e4350e920834b8b0a556e06245e"
+SCRIPT_REPO="https://github.com/tukaani-project/xz.git"
+SCRIPT_COMMIT="dbca3d078ec581600600abebbb18769d3d713914"
 
 ffbuild_enabled() {
     return 0
 }
 
 ffbuild_dockerbuild() {
+    ./autogen.sh --no-po4a --no-doxygen
+
     local myconf=(
         --prefix="$FFBUILD_PREFIX"
-        --without-python
-        --disable-maintainer-mode
+        --disable-symbol-versions
         --disable-shared
         --enable-static
+        --with-pic
     )
 
     if [[ $TARGET == win* || $TARGET == linux* ]]; then
@@ -25,15 +27,15 @@ ffbuild_dockerbuild() {
         return -1
     fi
 
-    ./autogen.sh "${myconf[@]}"
+    ./configure "${myconf[@]}"
     make -j$(nproc)
     make install
 }
 
 ffbuild_configure() {
-    echo --enable-libxml2
+    echo --enable-lzma
 }
 
 ffbuild_unconfigure() {
-    echo --disable-libxml2
+    echo --disable-lzma
 }
