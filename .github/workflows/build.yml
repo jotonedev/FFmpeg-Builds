@@ -231,6 +231,10 @@ jobs:
         run: |
           SLUG="${{ matrix.target }}-${{ matrix.variant }}"
           echo "artifact_slug=${SLUG// /-}" >> $GITHUB_OUTPUT
+      - name: Sign build artifacts
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: "artifacts/*"
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
